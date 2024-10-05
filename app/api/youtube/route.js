@@ -27,6 +27,10 @@ const fetchTranscript = async (url) => {
     try {
         const videoId = getYouTubeVideoId(url)
 
+        if (!videoId) {
+            throw new Error('Invalid or missing video ID');
+        }
+
         const info = await youtube.getInfo(videoId);
         const basic_info = info.basic_info
         const duration = basic_info.duration
@@ -40,17 +44,22 @@ const fetchTranscript = async (url) => {
     }
 };
 
-export async function youtubeTranscript(body) {
-    const videoId = body.videoId
+export async function POST(req) {
+    try {
+        const { videoId } = await req.json();
 
-    if (!videoId) {
-        const e = new Error('missing video id')
-        e.name = 'RequestError'
+        if (!videoId) {
+            return new Response(JSON.stringify({ error: 'Missing video ID' }), { status: 400 });
+        }
 
-        throw e
+        const { duration, transcript } = await fetchTranscript(videoId)
+
+        return new Response(JSON.stringify({
+            plainTextTranscript: transcript, 
+            duration: duration
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    } catch (error) {
+        console.log(error)
+        return Response.json({}, { status: 500 })
     }
-
-    const { duration, transcript } = await fetchTranscript(videoId)
-
-    return { plainTextTranscript: transcript, duration: duration };
 }

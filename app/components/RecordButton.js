@@ -3,7 +3,9 @@ import { Button } from '@nextui-org/button';
 import { RiRecordCircleLine } from "react-icons/ri";
 import { useState, useEffect, useRef } from "react"
 import { Spinner } from "@nextui-org/spinner";
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'
+import styles from './styles.module.css'
 
 export default function RecordButton() {
     const [counter, setCounter] = useState(0)
@@ -13,6 +15,8 @@ export default function RecordButton() {
     const [audioChunks, setAudioChunks] = useState(null)
     const [audioUrls, setAudioURLS] = useState([])
     const [isGenerating, setIsGenerating] = useState(false)
+    const markdownRef = useRef('')
+    const [markdown, setMarkdown] = useState('')
 
     const toggleRecord = () => { setIsRecording(!isRecording) }
     const timerRef = useRef(counter)
@@ -74,13 +78,44 @@ export default function RecordButton() {
                 })
 
                 const combined = await combineAudioBlobs(audiourls)
-                const res = await fetch('', {
+                const res = await fetch('/api/deepgram', {
                     method: "POST",
                     body: combined,
                     headers: {
                         'Content-Type': combined.type,
                     }
                 })
+
+                const transcriptJson = await res.json()
+
+                const markdownRes = await fetch('/api/anthropic', {
+                    method: "POST",
+                    body: JSON.stringify({
+                        transcript: transcriptJson.transcript
+                    })
+                })
+
+                const reader = markdownRes.body.getReader();
+                reader.read().then(async function processChunk({ done, value }) {
+                    if (done) {
+                        setIsGenerating(false)
+                    
+                        markdownRef.current = '' 
+
+                        console.log('Stream finished.');
+                        console.log("note saved")
+                        return;
+                    }
+                    // Process the chunk (e.g., append it to the page)
+                    const text = new TextDecoder().decode(value).toString()
+                    console.log(text)
+
+                    markdownRef.current = markdownRef.current + text
+                    setMarkdown((markdown) => { return markdown + text })
+
+                    return reader.read().then(processChunk);
+                });
+
 
 
                 setIsGenerating(false)
@@ -160,6 +195,11 @@ export default function RecordButton() {
                     </Button>
 
                 </div>
+            }
+            {
+                markdown !== '' && <div className={`${styles.markdown}`}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+                </div>  
             }
 
 

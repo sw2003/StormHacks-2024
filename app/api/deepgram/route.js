@@ -1,6 +1,6 @@
 import { createClient } from "@deepgram/sdk";
 
-const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
+const deepgram = createClient(process.env.DEEPGRAM_APIKEY);
 
 export async function POST(req) {
     const audioBlob = await req.blob()
@@ -10,26 +10,25 @@ export async function POST(req) {
 
         const buffer = Buffer.from(arrayBuffer);
 
-        const result = await deepgram.listen.prerecorded.transcribeFile(
-            {
-                buffer: buffer,
-                mimetype: audio/mpeg, 
-            },
+        const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
+            buffer,
             {
                 model: "nova-2",
-                punctuate: true,
             }
         );
 
         const transcript = result.results.channels[0].alternatives[0].transcript;
 
+        return Response.json({transcript})
+
+        /*
         return new Response(JSON.stringify({ transcript }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
           });
+        */
     } catch (error) {
         console.log(error)
-        await logError(error, 500)
         return Response.json({}, { status: 500 })
 
     }

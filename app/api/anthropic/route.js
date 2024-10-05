@@ -6,10 +6,12 @@ const anthropic = createAnthropic({
     apiKey: process.env.ANTHROPIC_APIKEY
 })
 
-export async function GET(req, transcript, langauge){
+export async function POST(req){
+    const body = await req.json() 
+    const transcript = body.transcript
 
     try {
-        const llmEndPoint = await callLLMEndpoint(transcript, langauge);
+        const llmEndPoint = await callLLMEndpoint(transcript);
         const streamResponse = llmEndPoint.res
 
         return new Response(streamResponse.body, {
