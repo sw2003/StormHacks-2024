@@ -8,14 +8,19 @@ export default function RecordButton() {
     const [isRecording, setIsRecording] = useState(false)
 
     const toggleRecord = () => {
+        let interval 
+
         if (isRecording) {
+            if (interval){
+                clearInterval(interval)
+            }
             setIsRecording(false)
             setCounter(0)
         }
         else {
             setIsRecording(true)
 
-            setInterval(() => {
+            interval = setInterval(() => {
                 setCounter((counter) => {
                     return counter += 1
                 })
