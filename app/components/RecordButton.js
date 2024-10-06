@@ -17,6 +17,7 @@ export default function RecordButton() {
     const [isGenerating, setIsGenerating] = useState(false)
     const markdownRef = useRef('')
     const [markdown, setMarkdown] = useState('')
+    const [markdowns, setMarkdowns] = useState([])
 
     const toggleRecord = () => { setIsRecording(!isRecording) }
     const timerRef = useRef(counter)
@@ -129,6 +130,22 @@ export default function RecordButton() {
         }
     }
 
+    const readNotes = async () => {
+
+        let markdownvariable = markdown.substring(0,1000)
+        const speech = await fetch('/api/openai', {
+            method: "POST",
+            body: JSON.stringify({
+                note: markdownvariable
+            })
+        })
+        const blob = await speech.blob()
+        const url = URL.createObjectURL(blob)
+        const audio = new Audio(url)
+        audio.play()
+
+    }
+
 
     const toggleRecordOff = () => {
         setIsRecording(false)
@@ -189,6 +206,11 @@ export default function RecordButton() {
                 audioUrls.length > 0 && <div className='max-w-[786px] mx-auto h-64 flex justify-center items-center'>
 
                     <Button color='primary' onPress={generate}>Create Notes
+                        {
+                            isGenerating && <Spinner color='default' size='sm'></Spinner>
+                        }
+                    </Button>
+                    <Button color='primary' onPress={readNotes} className='ml-2'>Read Notes
                         {
                             isGenerating && <Spinner color='default' size='sm'></Spinner>
                         }
