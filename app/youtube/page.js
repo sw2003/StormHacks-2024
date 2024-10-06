@@ -46,7 +46,7 @@ export default function YouTubePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ transcript: data.plainTextTranscript, language: 'en' }),
+        body: JSON.stringify({ transcript: data.plainTextTranscript, language: 'English' }),
       });
 
       if (!markdownResponse.ok) {

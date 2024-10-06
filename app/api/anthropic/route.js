@@ -9,9 +9,10 @@ const anthropic = createAnthropic({
 export async function POST(req){
     const body = await req.json() 
     const transcript = body.transcript
+    const language = body.language
 
     try {
-        const llmEndPoint = await callLLMEndpoint(transcript);
+        const llmEndPoint = await callLLMEndpoint(transcript, language);
         const streamResponse = llmEndPoint.res
 
         return new Response(streamResponse.body, {

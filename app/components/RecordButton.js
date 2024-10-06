@@ -103,7 +103,8 @@ export default function RecordButton() {
                 const markdownRes = await fetch('/api/anthropic', {
                     method: "POST",
                     body: JSON.stringify({
-                        transcript: transcriptJson.transcript
+                        transcript: transcriptJson.transcript,
+                        language: selectedLanguage
                     })
                 })
 
@@ -162,12 +163,10 @@ export default function RecordButton() {
 
     }
 
-    const handleLanguageChange = (selectedKeys) => {
-        const selected = selectedKeys[0];
-        setSelectedLanguage(selected);
-        console.log("Selected language:", selected); 
-    }
-
+    const handleLanguageChange = (language) => {
+        setSelectedLanguage(language.values().next().value);
+        console.log(language.values().next().value);
+      };
 
     const toggleRecordOff = () => {
         setIsRecording(false)
@@ -274,17 +273,16 @@ export default function RecordButton() {
                             <div>
                                 <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mt-3">
                                 <Select 
-                                label="Select a language" 
-                                className="max-w-xs" 
-                                defaultSelectedKeys={["english"]}
-                                selectedKeys={[selectedLanguage]}
-                                onSelectionChange={handleLanguageChange}
-                                >
-                                {languages.map((language) => (
-                                    <SelectItem key={language.key}>
-                                    {language.item}
-                                    </SelectItem>
-                                ))}
+                                    label="Select a language" 
+                                    className="max-w-xs" 
+                                    defaultSelectedKeys={["english"]}
+                                    onSelectionChange={handleLanguageChange}
+                                    >
+                                    {languages.map((language) => (
+                                        <SelectItem key={language.key} value={language.item}>
+                                        {language.item}
+                                        </SelectItem>
+                                    ))}
                                 </Select>
                             </div>
                             <div className='flex gap-2 mt-3 cursor-pointer px-4 py-2 bg-blue-600 rounded-full' onClick={generate}>
