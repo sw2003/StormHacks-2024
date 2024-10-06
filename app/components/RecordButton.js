@@ -219,7 +219,11 @@ export default function RecordButton() {
             <div ref={timerRef} className="hidden">0</div>
 
             {
-                markdown === '' && <div className=' h-screen flex justify-center items-center flex-col'>
+                markdown === '' && <div className='relative'>
+                    <div className='absolute h-80 flex justify-center items-center w-full text-6xl'>
+                        LectureSync
+                    </div>
+                      <div className=' h-screen flex justify-center items-center flex-col'>
                     {
                         !isRecording ?
                             <div className='max-w-[480px] w-full'>
@@ -297,10 +301,14 @@ export default function RecordButton() {
                     }
 
                 </div>
+
+                </div>
+                
+              
             }
        
 
-            <div className=' h-[92vh] overflow-y-auto relative' ref={containerRef}>
+            <div className={`${markdown === '' && 'hidden'} h-[92vh] overflow-y-auto relative`} ref={containerRef}>
                
                 {
                     markdown !== '' && <div className='max-w-[768px] p-2 mx-auto' >
@@ -312,7 +320,7 @@ export default function RecordButton() {
                 }
             </div>
             {
-                markdown !== '' && <div className='h-[8vh] flex gap-4 justify-center p-2'>
+                markdown !== '' && <div className={`${markdown === '' && 'hidden'} h-[8vh] flex gap-4 justify-center p-2`}>
                     <div className='px-4 py-1 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer gap-2' onClick={()=>{scrollToTop(); readNotes()}}>
                         Read aloud
                         <GiSpeaker size={15}></GiSpeaker>
