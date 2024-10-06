@@ -3,21 +3,24 @@ import "./cards.css";
 const services = [
   {
     step: "01",
-    name: "Diagnostics",
+    name: "Deepgram",
+    link: "https://deepgram.com/",
     description:
-      "State-of-the-art diagnostics to accurately identify vehicle issues.",
+      "Speech Recognition — AI models to transcribe, summarize speech. Converts audio file to text transcripts",
   },
   {
     step: "02",
-    name: "Repairs",
+    name: "Anthropic",
+    link: "https://www.anthropic.com/",
     description:
-      "Engine overhauls to brake replacements, we ensure high-quality work for your vehicle’s longevity.",
+      "Claude - family of LLMs developed by Anthropic. Generate markdown notes from Deepgram transcripts",
   },
   {
     step: "03",
-    name: "Maintenance",
+    name: "Openai",
+    link: "https://platform.openai.com/docs/guides/text-to-speech",
     description:
-      "Oil changes, tire rotations, and more to enhance performance and prevent future issues.",
+      "TTS (text-to-speech) model - an audio API that provides a speech endpoint. Reads out generated notes",
   },
 ];
 
