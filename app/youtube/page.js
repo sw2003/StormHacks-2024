@@ -5,6 +5,7 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styles from '../components/styles.module.css';
+import { Providers } from '../provider';
 
 export default function YouTubePage() {
   const [youtubeLink, setYoutubeLink] = useState('');
@@ -39,7 +40,6 @@ export default function YouTubePage() {
       }
 
       const data = await response.json();
-      // setTranscript(data.plainTextTranscript);
 
       const markdownResponse = await fetch('/api/anthropic', {
         method: 'POST',
@@ -71,58 +71,60 @@ export default function YouTubePage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8 bg-gray-900 text-white p-4">
-      <div className="w-full max-w-lg">
-        <Input
-          fullWidth
-          type="url"
-          label="YouTube Link"
-          placeholder="Please enter the YouTube video URL"
-          value={youtubeLink}
-          onChange={(e) => setYoutubeLink(e.target.value)}
-          className="text-lg px-4 py-3"
-        />
-      </div>
-
-      <div className="flex gap-6">
-        <Button
-          color="primary"
-          variant="ghost"
-          onClick={handleDelete}
-          className="text-xl px-6 py-3"
-        >
-          Delete
-        </Button>
-        <Button
-          color="primary"
-          variant="ghost"
-          onClick={handleSubmit}
-          className="text-xl px-6 py-3"
-          disabled={loading}
-        >
-          {loading ? <Spinner size="sm" /> : 'Submit'}
-        </Button>
-      </div>
-
-      {error && <div className="text-red-500">{error}</div>}
-
-      {transcript && (
-        <div className="mt-8 w-full max-w-lg">
-          <h3 className="text-2xl">Video Duration: {transcript.duration}</h3>
-          <h4 className="text-xl mt-4">Transcript:</h4>
-          <p className="whitespace-pre-line mt-2">{transcript}</p>
+    <Providers>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-4">
+        <div className="w-full max-w-lg">
+          <Input
+            fullWidth
+            type="url"
+            label="YouTube Link"
+            placeholder="Please enter the YouTube video URL"
+            value={youtubeLink}
+            onChange={(e) => setYoutubeLink(e.target.value)}
+            className="text-lg px-4 py-3"
+          />
         </div>
-      )}
 
-      {markdown && (
-        <div className="mt-8 w-full max-w-lg">
-          <div className={`${styles.markdown}`}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {markdown}
-            </ReactMarkdown>
+        <div className="flex gap-6">
+          <Button
+            color="primary"
+            variant="ghost"
+            onClick={handleDelete}
+            className="text-xl px-6 py-3"
+          >
+            Delete
+          </Button>
+          <Button
+            color="primary"
+            variant="ghost"
+            onClick={handleSubmit}
+            className="text-xl px-6 py-3"
+            disabled={loading}
+          >
+            {loading ? <Spinner size="sm" /> : 'Submit'}
+          </Button>
+        </div>
+
+        {error && <div className="text-red-500">{error}</div>}
+
+        {transcript && (
+          <div className="mt-8 w-full max-w-lg">
+            <h3 className="text-2xl">Video Duration: {transcript.duration}</h3>
+            <h4 className="text-xl mt-4">Transcript:</h4>
+            <p className="whitespace-pre-line mt-2">{transcript}</p>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {markdown && (
+          <div className="mt-8 w-full max-w-lg">
+            <div className={`${styles.markdown}`}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {markdown}
+              </ReactMarkdown>
+            </div>
+          </div>
+        )}
+      </div>
+    </Providers>
   );
 }
