@@ -6,18 +6,24 @@ import { Spinner } from "@nextui-org/spinner";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm'
 import styles from './styles.module.css'
+import { FaFileAudio } from "react-icons/fa6";
+import { BsFillSendArrowDownFill } from "react-icons/bs";
+import { GiSpeaker } from "react-icons/gi";
+import { useRouter } from "next/navigation"
 
 export default function RecordButton() {
     const [counter, setCounter] = useState(0)
     const [isRecording, setIsRecording] = useState(false)
     const [mediaRecorder, setMediaRecorder] = useState(null)
     const [mediaStream, setMediaStream] = useState(null)
-    const [audioChunks, setAudioChunks] = useState(null)
     const [audioUrls, setAudioURLS] = useState([])
     const [isGenerating, setIsGenerating] = useState(false)
     const markdownRef = useRef('')
     const [markdown, setMarkdown] = useState('')
-    const [markdowns, setMarkdowns] = useState([])
+    const containerRef = useRef(null)
+    const [isGeneratingVoice, setIsGeneratingVoice] = useState(false)
+    const router = useRouter()
+    
 
     const toggleRecord = () => { setIsRecording(!isRecording) }
     const timerRef = useRef(counter)
@@ -31,6 +37,7 @@ export default function RecordButton() {
         try {
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
+
                     const mediaRecorder = new MediaRecorder(stream);
                     setMediaRecorder(new MediaRecorder(stream))
                     setMediaStream(stream)
@@ -51,6 +58,7 @@ export default function RecordButton() {
                         })
 
                         clearInterval(interval)
+                        setIsRecording(false)
 
                         setCounter(0)
 
@@ -89,6 +97,7 @@ export default function RecordButton() {
 
                 const transcriptJson = await res.json()
 
+
                 const markdownRes = await fetch('/api/anthropic', {
                     method: "POST",
                     body: JSON.stringify({
@@ -100,8 +109,8 @@ export default function RecordButton() {
                 reader.read().then(async function processChunk({ done, value }) {
                     if (done) {
                         setIsGenerating(false)
-                    
-                        markdownRef.current = '' 
+
+                        markdownRef.current = ''
 
                         console.log('Stream finished.');
                         console.log("note saved")
@@ -109,6 +118,7 @@ export default function RecordButton() {
                     }
                     // Process the chunk (e.g., append it to the page)
                     const text = new TextDecoder().decode(value).toString()
+                    scrollToBottom()
                     console.log(text)
 
                     markdownRef.current = markdownRef.current + text
@@ -131,14 +141,18 @@ export default function RecordButton() {
     }
 
     const readNotes = async () => {
+        setIsGeneratingVoice(true)
 
-        let markdownvariable = markdown.substring(0,1000)
+        let markdownvariable = markdown.substring(0, 1000)
         const speech = await fetch('/api/openai', {
             method: "POST",
             body: JSON.stringify({
                 note: markdownvariable
             })
         })
+
+        setIsGeneratingVoice(false)
+        
         const blob = await speech.blob()
         const url = URL.createObjectURL(blob)
         const audio = new Audio(url)
@@ -160,70 +174,126 @@ export default function RecordButton() {
         }
     }
 
-    useEffect(() => {
-        console.log(audioUrls)
-    }, [audioUrls])
+   
+
+    const scrollToBottom = () => {
+        if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight
+        }
+    }
+
+    const scrollToTop = () => {
+        if (containerRef.current) {
+            containerRef.current.scrollTop = 0;  // Scroll to the top
+        }
+    }
+
+    const reset = ()=>{
+        setMarkdown('')
+        setIsRecording(false)
+        setIsGenerating(false) 
+        setAudioURLS([])
+        setIsGeneratingVoice(false)
+
+    }
+
+
 
     return (
         <>
             <div ref={timerRef} className="hidden">0</div>
+
             {
-                !isRecording ?
-                    <div className="p-2" onClick={() => { toggleRecord(); recordAudio() }}>
-                        <div className="p-2 bg-green-600 rounded-full text-center cursor-pointer flex gap-3 items-center justify-center">
-                            <RiRecordCircleLine size={20}></RiRecordCircleLine>
-                            <div>
-                                Record
+                markdown === '' && <div className=' h-screen flex justify-center items-center flex-col'>
+                    {
+                        !isRecording ?
+                            <div className='max-w-[480px] w-full'>
+                                <div className="p-2 max-w-[480px] w-full" onClick={() => { toggleRecord(); recordAudio()}}>
+                                    <div className="p-2 bg-green-600 rounded-full text-center cursor-pointer flex gap-3 items-center justify-center">
+                                        <RiRecordCircleLine size={20}></RiRecordCircleLine>
+                                        <div>
+                                            Record
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+
                             </div>
 
-                        </div>
-                    </div>
-                    :
-                    <div className='p-2' onClick={() => { toggleRecord(); toggleRecordOff(); }}>
-                        <div className='p-2 bg-red-500 rounded-full text-center cursor-pointer flex gap-3 items-center justify-center'>
-                            Stop recording
-                            {
-                                isRecording && <div className="">{secondsToHHMMSS(counter)}</div>
-                            }
-                        </div>
-                    </div>
-            }
-            <div className='flex gap-2 overflow-x-auto mx-auto max-w-[768px] w-full'>
-                {
-                    audioUrls.map((audioUrl) => {
-                        return <div className='px-8 bg-blue-600 rounded cursor-pointer'>
 
-                            {
-                                secondsToHHMMSS(audioUrl.timer)
+                            :
+                            <div className='p-2 max-w-[480px] w-full' onClick={() => { toggleRecord(); toggleRecordOff(); }}>
+                                <div className='p-2 bg-red-500 rounded-full text-center cursor-pointer flex gap-3 items-center justify-center'>
+                                    Stop recording
+                                    {
+                                        isRecording && <div className="">{secondsToHHMMSS(counter)}</div>
+                                    }
+                                </div>
+                            </div>
+                    }
+                    <div className='flex gap-2 overflow-x-auto max-w-[480px] w-full px-4'>
 
-                            }
 
-                        </div>
-                    })
-                }
-            </div>
-            {
-                audioUrls.length > 0 && <div className='max-w-[786px] mx-auto h-64 flex justify-center items-center'>
 
-                    <Button color='primary' onPress={generate}>Create Notes
                         {
-                            isGenerating && <Spinner color='default' size='sm'></Spinner>
+                            audioUrls.map((audioUrl) => {
+                                return <div className='px-4 bg-neutral-800 rounded cursor-pointer flex gap-2 items-center'>
+                                    <FaFileAudio size={15}></FaFileAudio>
+
+
+                                    {
+                                        secondsToHHMMSS(audioUrl.timer)
+
+                                    }
+
+                                </div>
+                            })
                         }
-                    </Button>
-                    <Button color='primary' onPress={readNotes} className='ml-2'>Read Notes
-                        {
-                            isGenerating && <Spinner color='default' size='sm'></Spinner>
-                        }
-                    </Button>
+
+                    </div>
+
+                    {
+                        audioUrls.length > 0 && <div className='flex gap-2 mt-10 cursor-pointer px-4 py-2 bg-blue-600 rounded-full' onClick={generate}>
+                            <BsFillSendArrowDownFill size={25}></BsFillSendArrowDownFill>
+                            Create Note
+
+                        </div>
+                    }
 
                 </div>
             }
+       
+
+            <div className=' h-[92vh] overflow-y-auto relative' ref={containerRef}>
+               
+                {
+                    markdown !== '' && <div className='max-w-[768px] p-2 mx-auto' >
+                        <div className={`${styles.markdown}`}>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+                        </div>
+                    </div>
+
+                }
+            </div>
             {
-                markdown !== '' && <div className={`${styles.markdown}`}>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
-                </div>  
+                markdown !== '' && <div className='h-[8vh] flex gap-4 justify-center p-2'>
+                    <div className='px-4 py-1 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer gap-2' onClick={()=>{scrollToTop(); readNotes()}}>
+                        Read aloud
+                        <GiSpeaker size={15}></GiSpeaker>
+                        {
+                            isGeneratingVoice && <Spinner color="default" size='15'></Spinner>
+                        }
+                    </div>
+                    <div className='px-4 py-1 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer' onClick={reset}>Create Another Note</div>
+                </div>
             }
 
+
+
+
+            
 
 
 
