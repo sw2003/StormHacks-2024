@@ -1,5 +1,6 @@
 "use client"
 import { Button } from '@nextui-org/button';
+import {Select, SelectItem} from "@nextui-org/react";
 import { RiRecordCircleLine } from "react-icons/ri";
 import { useState, useEffect, useRef } from "react"
 import { Spinner } from "@nextui-org/spinner";
@@ -22,6 +23,7 @@ export default function RecordButton() {
     const [markdown, setMarkdown] = useState('')
     const containerRef = useRef(null)
     const [isGeneratingVoice, setIsGeneratingVoice] = useState(false)
+    const [selectedLanguage, setSelectedLanguage] = useState("English")
     const router = useRouter()
     
 
@@ -160,6 +162,12 @@ export default function RecordButton() {
 
     }
 
+    const handleLanguageChange = (selectedKeys) => {
+        const selected = selectedKeys[0];
+        setSelectedLanguage(selected);
+        console.log("Selected language:", selected); 
+    }
+
 
     const toggleRecordOff = () => {
         setIsRecording(false)
@@ -197,7 +205,14 @@ export default function RecordButton() {
 
     }
 
-
+    const [languages, setLanguages] = useState([
+        {key: "english", item: "English"},
+        {key: "french", item: "French"},
+        {key: "spanish", item: "Spanish"},
+        {key: "russian", item: "Russian"},
+        {key: "chinese", item: "Chinese"},
+        {key: "korean", item: "Korean"},
+    ])
 
     return (
         <>
@@ -253,13 +268,32 @@ export default function RecordButton() {
                         }
 
                     </div>
-
                     {
-                        audioUrls.length > 0 && <div className='flex gap-2 mt-10 cursor-pointer px-4 py-2 bg-blue-600 rounded-full' onClick={generate}>
-                            <BsFillSendArrowDownFill size={25}></BsFillSendArrowDownFill>
-                            Create Note
+                        audioUrls.length > 0 && 
+                        (
+                            <div>
+                                <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mt-3">
+                                <Select 
+                                label="Select a language" 
+                                className="max-w-xs" 
+                                defaultSelectedKeys={["english"]}
+                                selectedKeys={[selectedLanguage]}
+                                onSelectionChange={handleLanguageChange}
+                                >
+                                {languages.map((language) => (
+                                    <SelectItem key={language.key}>
+                                    {language.item}
+                                    </SelectItem>
+                                ))}
+                                </Select>
+                            </div>
+                            <div className='flex gap-2 mt-3 cursor-pointer px-4 py-2 bg-blue-600 rounded-full' onClick={generate}>
+                                <BsFillSendArrowDownFill size={25}></BsFillSendArrowDownFill>
+                                Create Note
 
+                            </div>
                         </div>
+                        )
                     }
 
                 </div>
