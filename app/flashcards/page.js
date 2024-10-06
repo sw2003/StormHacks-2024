@@ -24,7 +24,7 @@ const services = [
   },
 ];
 
-export const FlipCardComponent = () => {
+const FlipCardComponent = () => {
   return (
     <section className="py-16 mx-auto sm:py-20">
       <div className="mx-auto flex justify-center object-center px-4 py-16 sm:py-24 lg:max-w-7xl">
@@ -37,12 +37,12 @@ export const FlipCardComponent = () => {
               >
                 <div className="relative h-full w-full rounded-xl shadow-xl transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
                   {/* Front Face */}
-                  <div className="absolute inset-0 h-full w-full rounded-xl bg-black/50 [backface-visibility:hidden]">
+                  <div className="absolute inset-0 h-full w-full rounded-xl bg-white [backface-visibility:hidden]">
                     <div className="flex flex-col items-center justify-center h-full p-6">
                       <p className="text-xl text-blue-500 mb-2">
                         Step {service.step}
                       </p>
-                      <p className="text-3xl font-bold text-white">
+                      <p className="text-3xl font-bold text-gray-800">
                         {service.name}
                       </p>
                     </div>
@@ -56,9 +56,9 @@ export const FlipCardComponent = () => {
                       <p className="text-lg text-pretty text-center mb-4">
                         {service.description}
                       </p>
-                      <a href={service.link} className="inline-flex">
+                      <a href="tel:555-555-5555" className="inline-flex">
                         <button className="my-2 bg-yellow-800 hover:bg-yellow-700 text-white font-bold py-2 px-4 w-auto rounded-full inline-flex items-center">
-                          <span>Details</span>
+                          <span>Schedule Service</span>
                         </button>
                       </a>
                     </div>
