@@ -1,0 +1,199 @@
+/* FlipCardComponent.css */
+
+/* Section Styling */
+.flip-card-section {
+    padding-top: 4rem; /* Equivalent to py-16 */
+    padding-bottom: 4rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  @media (min-width: 640px) {
+    .flip-card-section {
+      padding-top: 5rem; /* sm:py-20 */
+      padding-bottom: 5rem;
+    }
+  }
+  
+  /* Container Styling */
+  .flip-card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* object-center */
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem;
+    padding-top: 4rem; /* py-16 */
+    padding-bottom: 4rem;
+  }
+  
+  @media (min-width: 640px) {
+    .flip-card-container {
+      padding-top: 6rem; /* sm:py-24 */
+      padding-bottom: 6rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .flip-card-container {
+      max-width: 80rem; /* lg:max-w-7xl */
+    }
+  }
+  
+  /* Wrapper Styling */
+  .flip-card-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 3rem; /* gap-12 */
+  }
+  
+  @media (min-width: 640px) {
+    .flip-card-wrapper {
+      gap: 4rem; /* sm:gap-16 */
+    }
+  }
+  
+  /* Grid Styling */
+  .flip-card-grid {
+    display: grid;
+    gap: 3rem; /* gap-12 */
+  }
+  
+  @media (min-width: 640px) {
+    .flip-card-grid {
+      gap: 4rem; /* sm:gap-16 */
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .flip-card-grid {
+      grid-template-columns: repeat(3, 1fr); /* lg:grid-cols-3 */
+    }
+  }
+  
+  /* Flip Card Group */
+  .flip-card-group {
+    perspective: 1000px;
+    height: 24rem; /* h-96 */
+    width: 24rem; /* w-96 */
+  }
+  
+  @media (max-width: 1024px) {
+    .flip-card-group {
+      height: 20rem;
+      width: 20rem;
+    }
+  }
+  
+  /* Flip Card Inner */
+  .flip-card-inner {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* shadow-xl */
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+  
+  .flip-card-group:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+  
+  /* Front Face */
+  .flip-card-front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 0.75rem;
+    background-color: #ffffff; /* bg-white */
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem; /* p-6 */
+  }
+  
+  .flip-card-step {
+    font-size: 1.25rem; /* text-xl */
+    color: #3b82f6; /* text-blue-500 */
+    margin-bottom: 0.5rem; /* mb-2 */
+  }
+  
+  .flip-card-name {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    color: #1f2937; /* text-gray-800 */
+  }
+  
+  /* Back Face */
+  .flip-card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.8); /* bg-black/80 */
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    text-align: center;
+    color: #cbd5e1; /* text-slate-200 */
+    padding-left: 3rem; /* px-12 */
+    padding-right: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .flip-card-back-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+  }
+  
+  .flip-card-back-name {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 700; /* font-bold */
+    margin-bottom: 1rem; /* mb-4 */
+  }
+  
+  .flip-card-description {
+    font-size: 1.125rem; /* text-lg */
+    text-align: center;
+    margin-bottom: 1rem; /* mb-4 */
+    color: #a0aec0; /* text-pretty (assuming a gray shade) */
+  }
+  
+  .flip-card-link {
+    display: inline-flex;
+  }
+  
+  .flip-card-button {
+    margin-top: 0.5rem; /* my-2 */
+    margin-bottom: 0.5rem;
+    background-color: #b45309; /* bg-yellow-800 */
+    color: #ffffff; /* text-white */
+    font-weight: 700; /* font-bold */
+    padding-top: 0.5rem; /* py-2 */
+    padding-bottom: 0.5rem;
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem;
+    border: none;
+    border-radius: 9999px; /* rounded-full */
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .flip-card-button:hover {
+    background-color: #ca8a04; /* hover:bg-yellow-700 */
+  }
+  
