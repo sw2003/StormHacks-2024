@@ -3,28 +3,25 @@ import "./cards.css";
 const services = [
   {
     step: "01",
-    name: "Deepgram",
-    link: "https://deepgram.com/",
+    name: "Diagnostics",
     description:
-      "Speech Recognition — AI models to transcribe, summarize speech. Converts audio file to text transcripts",
+      "State-of-the-art diagnostics to accurately identify vehicle issues.",
   },
   {
     step: "02",
-    name: "Anthropic",
-    link: "https://www.anthropic.com/",
+    name: "Repairs",
     description:
-      "Claude - family of LLMs developed by Anthropic. Generate markdown notes from Deepgram transcripts",
+      "Engine overhauls to brake replacements, we ensure high-quality work for your vehicle’s longevity.",
   },
   {
     step: "03",
-    name: "Openai",
-    link: "https://platform.openai.com/docs/guides/text-to-speech",
+    name: "Maintenance",
     description:
-      "TTS (text-to-speech) model - an audio API that provides a speech endpoint. Reads out generated notes",
+      "Oil changes, tire rotations, and more to enhance performance and prevent future issues.",
   },
 ];
 
-export const FlipCardComponent = () => {
+const FlipCardComponent = () => {
   return (
     <section className="py-16 mx-auto sm:py-20">
       <div className="mx-auto flex justify-center object-center px-4 py-16 sm:py-24 lg:max-w-7xl">
@@ -37,12 +34,12 @@ export const FlipCardComponent = () => {
               >
                 <div className="relative h-full w-full rounded-xl shadow-xl transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
                   {/* Front Face */}
-                  <div className="absolute inset-0 h-full w-full rounded-xl bg-black/50 [backface-visibility:hidden]">
+                  <div className="absolute inset-0 h-full w-full rounded-xl bg-white [backface-visibility:hidden]">
                     <div className="flex flex-col items-center justify-center h-full p-6">
                       <p className="text-xl text-blue-500 mb-2">
                         Step {service.step}
                       </p>
-                      <p className="text-3xl font-bold text-white">
+                      <p className="text-3xl font-bold text-gray-800">
                         {service.name}
                       </p>
                     </div>
@@ -56,9 +53,9 @@ export const FlipCardComponent = () => {
                       <p className="text-lg text-pretty text-center mb-4">
                         {service.description}
                       </p>
-                      <a href={service.link} className="inline-flex">
+                      <a href="tel:555-555-5555" className="inline-flex">
                         <button className="my-2 bg-yellow-800 hover:bg-yellow-700 text-white font-bold py-2 px-4 w-auto rounded-full inline-flex items-center">
-                          <span>Details</span>
+                          <span>Schedule Service</span>
                         </button>
                       </a>
                     </div>
