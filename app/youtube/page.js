@@ -1,11 +1,15 @@
 'use client';
 
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, Spinner } from '@nextui-org/react';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import styles from '../components/styles.module.css';
 
 export default function YouTubePage() {
   const [youtubeLink, setYoutubeLink] = useState('');
-  const [result, setResult] = useState(null);
+  const [transcript, setTranscript] = useState(null);
+  const [markdown, setMarkdown] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -17,7 +21,11 @@ export default function YouTubePage() {
 
     setLoading(true);
     setError('');
+    setMarkdown('');
+    setTranscript(null);
+
     try {
+      // First API call to fetch transcript
       const response = await fetch('/api/youtube', {
         method: 'POST',
         headers: {
@@ -27,33 +35,49 @@ export default function YouTubePage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch data');
+        throw new Error('Failed to fetch video data');
       }
 
       const data = await response.json();
-      setResult(data);
+      // setTranscript(data.plainTextTranscript);
+
+      const markdownResponse = await fetch('/api/anthropic', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ transcript: data.plainTextTranscript, language: 'en' }),
+      });
+
+      if (!markdownResponse.ok) {
+        throw new Error('Failed to process transcript into Markdown');
+      }
+
+      const markdownData = await markdownResponse.text(); // Assuming the API returns plain text Markdown
+      setMarkdown(markdownData);
     } catch (err) {
-      setError('Error fetching transcript or video information.');
+      console.error(err);
+      setError('Error fetching or processing transcript.');
     } finally {
       setLoading(false);
     }
-    // Log the returned data to inspect the values
-    console.log('Data returned:', data);
   };
 
   const handleDelete = () => {
     setYoutubeLink('');
-    setResult(null);
+    setTranscript(null);
+    setMarkdown('');
+    setError('');
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-8 bg-gray-900 text-white">
+    <div className="flex flex-col items-center justify-center min-h-screen gap-8 bg-gray-900 text-white p-4">
       <div className="w-full max-w-lg">
         <Input
           fullWidth
           type="url"
           label="YouTube Link"
-          placeholder="Please enter the URL"
+          placeholder="Please enter the YouTube video URL"
           value={youtubeLink}
           onChange={(e) => setYoutubeLink(e.target.value)}
           className="text-lg px-4 py-3"
@@ -76,17 +100,27 @@ export default function YouTubePage() {
           className="text-xl px-6 py-3"
           disabled={loading}
         >
-          {loading ? 'Submitting...' : 'Submit'}
+          {loading ? <Spinner size="sm" /> : 'Submit'}
         </Button>
       </div>
 
       {error && <div className="text-red-500">{error}</div>}
 
-      {result && (
-        <div className="mt-8">
-          <h3 className="text-2xl">Video Duration: {result.duration}</h3>
+      {transcript && (
+        <div className="mt-8 w-full max-w-lg">
+          <h3 className="text-2xl">Video Duration: {transcript.duration}</h3>
           <h4 className="text-xl mt-4">Transcript:</h4>
-          <p className="whitespace-pre-line mt-2">{result.plainTextTranscript}</p>
+          <p className="whitespace-pre-line mt-2">{transcript}</p>
+        </div>
+      )}
+
+      {markdown && (
+        <div className="mt-8 w-full max-w-lg">
+          <div className={`${styles.markdown}`}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {markdown}
+            </ReactMarkdown>
+          </div>
         </div>
       )}
     </div>
