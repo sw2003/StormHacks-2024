@@ -5,12 +5,12 @@ export default function Page() {
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <h1>MyAid App Instruction</h1>
+                <h1>LectureSync Instruction</h1>
                 <p>Follow these instructions to get started with the app.</p>
             </header>
 
             <section className={styles.step}>
-                <h2>1. Goto myaidapp.com and press Record</h2>
+                <h2>1. Goto https://storm-hacks-2024.vercel.app/ and press Record</h2>
                 <Image
                     src="/images/record.png"
                     alt="Record"
